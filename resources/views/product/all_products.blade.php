@@ -26,7 +26,7 @@
             <th scope="row">{{$product->id}}</th>
             <td>{{$product->name_product}}</td>
             <td>{{$product->description}}</td>
-            <td>{{$product->availability}}</td>
+
             <td></td>
         </tr>
     @endforeach
