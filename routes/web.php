@@ -15,8 +15,10 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('home')->name('home');
-});
+Route::get('/home', function () {
+    return view('home');
+})->name('home');
 Route::resource('product',ProductController::class);
-
+Route::get('product/forcedelete/{id}',[ProductController::class , 'forcdelete'])->name('product.forcedelete');
+Route::get('product/showme/softdelete',[ProductController::class,'showme'])->name('product.showme');
+Route::get('product/restore/{id}',[ProductController::class,'restore'])->name('product.restore');
