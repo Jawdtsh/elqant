@@ -27,21 +27,17 @@
             <td>{{$product->name_product}}</td>
             <td>{{$product->description}}</td>
             <td>
-                <a type="button" href="{{route('product.edit',$product->id)}}" class="btn btn-primary">edit</a>
 
-                <form action="{{route('product.destroy',$product->id)}}" method="post">
-                    @method('delete')
+                <form action="" method="get">
                     @csrf
-                    <button type="submit" href="{{route('product.destroy',$product->id)}}" class="btn btn-danger">delete</button>
+                    <a type="submit" href="{{route('product.forcedelete',$product->id)}}" class="btn btn-danger">force delete</a>
                 </form>
-
+                    <a type="submit" href="{{route('product.restore',$product->id)}}" class="btn btn-success">reset</a>
             </td>
         </tr>
     @endforeach
     </tbody>
 </table>
-
-<a href="{{route('product.create')}}">create product</a><br>
-
+<a href="{{route('product.index')}}">all product</a>
 </body>
 </html>

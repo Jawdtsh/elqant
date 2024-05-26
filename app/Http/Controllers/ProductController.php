@@ -3,19 +3,23 @@
 namespace App\Http\Controllers;
 
 use App\Models\Product;
+use Illuminate\Contracts\Foundation\Application;
+use Illuminate\Contracts\View\Factory;
+use Illuminate\Contracts\View\View;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 
 class ProductController extends Controller
 {
 
-    public function index(): \Illuminate\Contracts\View\View|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\Foundation\Application
+    public function index(): Application|Factory|View
     {
         $products = Product::all();
         return view('product.all_products',compact('products'));
     }
 
 
-    public function create(): \Illuminate\Contracts\View\View|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\Foundation\Application
+    public function create(): View|Factory|Application
     {
 
         return view('product.create');
@@ -25,64 +29,73 @@ class ProductController extends Controller
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\RedirectResponse
+     * @return RedirectResponse
      */
     public function store(Request $request)
     {
-//        $product = new Product();
-//        $product->name_product = $request->name_product;
-//        $product->description = $request->description;
-//        $product->save();
-        Product::create( $request->all());
 
-
+        Product::create($request->all());
         return redirect()->route('product.index');
-
-//        $product->description
     }
 
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\Product  $product
-     * @return \Illuminate\Http\Response
+     * @param Product $product
+     * @return string
      */
-    public function show(Product $product)
-    {
-        //
-    }
+
 
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Models\Product  $product
-     * @return \Illuminate\Http\Response
+     * @param $id
+     * @return Application|Factory|View
      */
-    public function edit(Product $product)
+    public function edit($id)
     {
-        //
+        $product = Product::find($id);
+        return view('product.edite',compact('product'));
     }
 
     /**
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Product  $product
-     * @return \Illuminate\Http\Response
+     * @param Product $product
+     * @return RedirectResponse
      */
-    public function update(Request $request, Product $product)
+    public function update(Request $request,  $id)
     {
-        //
+        $product = Product::findorfail($id);
+        $product->update($request->all());
+        return redirect()->route('product.index');
     }
 
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\Product  $product
-     * @return \Illuminate\Http\Response
+     * @param $id
+     * @return RedirectResponse
      */
-    public function destroy(Product $product)
+    public function destroy($id)
     {
-        //
+        $product = Product::where('id',$id)->delete();
+        return redirect()->route('product.index');
+    }
+    public function forcdelete($id)
+    {
+        Product::withTrashed()->where('id',$id)->forceDelete();
+        return redirect()->back();
+    }
+    public function showme(): Factory|View|Application
+    {
+        $products = Product::onlyTrashed()->get();
+        return view('product.only_trashed',compact('products'));
+    }
+    public function restore($id): RedirectResponse
+    {
+        Product::onlyTrashed()->where('id',$id)->restore();
+        return redirect()->back();
     }
 }
